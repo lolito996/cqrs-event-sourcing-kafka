@@ -27,3 +27,7 @@ spring:
           json:
             trusted:
               packages: '*'
+
+app:
+  kafka:
+    topic: bankAccountEvents

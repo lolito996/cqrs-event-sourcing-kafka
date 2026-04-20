@@ -9,6 +9,7 @@ import com.techbank.cqrs.core.exceptions.ConcurrencyException;
 import com.techbank.cqrs.core.infrastructure.EventStore;
 import com.techbank.cqrs.core.producers.EventProducer;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;
@@ -19,6 +20,9 @@ import java.util.stream.Collectors;
 public class AccountEventStore implements EventStore {
     @Autowired
     private EventProducer eventProducer;
+
+    @Value("${app.kafka.topic}")
+    private String topic;
 
     @Autowired
     private EventStoreRepository eventStoreRepository;
@@ -43,7 +47,7 @@ public class AccountEventStore implements EventStore {
                    .build();
            var persistedEvent = eventStoreRepository.save(eventModel);
            if (!persistedEvent.getId().isEmpty()) {
-               eventProducer.produce(event.getClass().getSimpleName(), event);
+               eventProducer.produce(topic, event);
            }
         }
     }
